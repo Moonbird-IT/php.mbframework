@@ -1,12 +1,11 @@
 # mbframework
 Moonbird framework, lightweight PHP framework
 
-Installation:
--------------
-Copy the mbframework directory to a given location of your choice and add the path to the "include_dir". 
-If used as part of a web application, restart the webserver to update the include_dir path.
+### Installation and getting started
 
-Please note:
-------------
+To see requirements, installation and how to get started, have a look at the [wiki](https://github.com/Moonbird-IT/mbframework/wiki)
+
+### Deprecation notice
+
 * the MSSQL driver currently uses the removed mssql_* functions deprecated in PHP 5.2x and removed in PHP 5.3x;
   use the SqlSrv version instead.
