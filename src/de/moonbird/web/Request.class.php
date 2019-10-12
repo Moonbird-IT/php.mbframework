@@ -70,4 +70,3 @@ abstract class Request extends Registry
   }
 
 }
-?>
