@@ -22,8 +22,12 @@ abstract class AbstractViewController
   protected $arrHeadIncludes= array();
   public $viewData= array();
 
-  public function loadView($name) {
-    include (str_replace('.', DIRECTORY_SEPARATOR, 'src.'.$name).'View.php');
+  public function loadView($name, $relativeToController = FALSE) {
+	if (!$relativeToController) {  
+	  include (str_replace('.', DIRECTORY_SEPARATOR, 'src.'.$name).'View.php');
+    } else {
+	  include (str_replace('.', DIRECTORY_SEPARATOR, $name).'View.php');
+	}
   }
 
   protected function addHeadInclude ($directive) {

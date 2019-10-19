@@ -1,57 +1,57 @@
 <?php
-class SqlSrvConnection extends Connection
+class SqlSrvConnection extends Connection implements IDatabaseConnection
 {
   private $parent = FALSE;
   private $internalConnection = FALSE;
 
-  /**
-   * @param Connection $parent
-   */
-  public function __construct($parent)
-  {
-    $this->parent = $parent;
-    $connectInfo= array(
-      'Database' => $this->parent->database,
-      'UID' => $this->parent->username,
-      'PWD' => $this->parent->password
-    );
-    $this->internalConnection = sqlsrv_connect(
-      $this->parent->host, $connectInfo);
+	/**
+	 * @param Connection $parent
+	 */
+	public function __construct($parent)
+	{
+		$this->parent = $parent;
+		$connectInfo= array(
+			'Database' => $this->parent->database,
+			'UID' => $this->parent->username,
+			'PWD' => $this->parent->password
+		);
+		$this->internalConnection = sqlsrv_connect(
+			$this->parent->host, $connectInfo);
 
-    if ($this->internalConnection) {
-      $this->parent->state = ConnectionState::OPEN;
-    } else {
-      $this->parent->message= print_r(sqlsrv_errors(), TRUE);
-      $this->parent->state = ConnectionState::FAILED;
-    }
-  }
+		if ($this->internalConnection) {
+			$this->parent->state = ConnectionState::OPEN;
+		} else {
+			$this->parent->message= print_r(sqlsrv_errors(), TRUE);
+			$this->parent->state = ConnectionState::FAILED;
+		}
+	}
 
-  /**
-   * Return a recordset
-   *
-   * @param String $query
-   * @return Array
-   */
-  public function select($query)
-  {
-    // in case a string has been passed, convert it to an array with 1 element
-    $queries = is_array($query) ? $query : array($query);
+	/**
+	 * Return a recordset
+	 *
+	 * @param String $query
+	 * @return array
+	 */
+	public function select($query)
+	{
+		// in case a string has been passed, convert it to an array with 1 element
+		$queries = is_array($query) ? $query : array($query);
 
-    $result = array();
+		$result = array();
 
-    foreach ($queries as $query) {
-      $res = @sqlsrv_query($this->internalConnection, $query);
-      if (!$res) {
-        $this->parent->message = print_r(sqlsrv_errors(), TRUE);
-        return FALSE;
-      } else {
-        while ($row = sqlsrv_fetch_array ($res)) {
-          $result[] = $row;
-        }
-        return $result;
-      }
-    }
-  }
+		foreach ($queries as $query) {
+			$res = @sqlsrv_query($this->internalConnection, $query);
+			if (!$res) {
+				$this->parent->message = print_r(sqlsrv_errors(), TRUE);
+				return FALSE;
+			} else {
+				while ($row = sqlsrv_fetch_array ($res)) {
+					$result[] = $row;
+				}
+				return $result;
+			}
+		}
+	}
 
   public function execute($query)
   {
@@ -127,4 +127,9 @@ class SqlSrvConnection extends Connection
     unset($arrValues);
     return $arrResult;
   }
+
+	public function bindParameters($arrParameters)
+	{
+		// TODO: Implement bindParameters() method.
+	}
 }

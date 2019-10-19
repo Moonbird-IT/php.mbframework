@@ -6,7 +6,10 @@ uses ('de.moonbird.common.configuration.Configuration');
 
 class DatabaseConfiguration extends Configuration
 {
-  static function get ($key) {
+  static function get () {
+    $argv = func_get_args();
+    $key= $argv[0];
+
     $databases= parent::get('database');
     if ($databases != NULL) {
       if (is_array($databases) && array_key_exists($key, $databases)) {
