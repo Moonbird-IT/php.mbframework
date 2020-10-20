@@ -1,11 +1,12 @@
 <?php
 /**
  * create a list of dependant includes for a class (not needing to be classes)
+ * @throws IllegalArgumentException
  */
 function depends()
 {
   $funcArgs = func_get_args();
-  if (count($funcArgs) == 0) {
+  if (count($funcArgs) === 0) {
     throw new IllegalArgumentException ('depends() expects at least one argument',
       ExceptionCode::IA_MISSINGARGUMENT);
   }
@@ -16,16 +17,11 @@ function depends()
 }
 
 /**
- * include a list of classes for usage
+ * include a list of classes for usage.
  */
 function uses()
 {
   $funcArgs = func_get_args();
-  if (count($funcArgs) == 0) {
-    throw new IllegalArgumentException ('uses() expects at least one argument',
-      ExceptionCode::IA_MISSINGARGUMENT);
-  }
-
   foreach ($funcArgs as $arg) {
     include_once ('src' . DIRECTORY_SEPARATOR . str_replace('.', DIRECTORY_SEPARATOR, strtolower($arg)) . '.class.php');
   }
@@ -36,11 +32,12 @@ function uses()
  * loading classes through factories
  *
  * @return boolean result
+ * @throws IllegalArgumentException
  */
 function check_dependency()
 {
   $funcArgs = func_get_args();
-  if (count($funcArgs) == 0) {
+  if (count($funcArgs) === 0) {
     throw new IllegalArgumentException ('check_dependency() expects at least one argument',
       ExceptionCode::IA_MISSINGARGUMENT);
   }
@@ -55,6 +52,11 @@ function check_dependency()
   return $dependencyCheck;
 }
 
+/**
+ * Check if a file exists inside the include path.
+ * @param $file
+ * @return bool
+ */
 function file_exists_include_path($file)
 {
   $ps = explode(";", ini_get('include_path'));
@@ -79,5 +81,3 @@ function load($component)
     return FALSE;
   }
 }
-
-?>

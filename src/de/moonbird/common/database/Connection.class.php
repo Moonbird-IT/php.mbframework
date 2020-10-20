@@ -8,7 +8,8 @@ uses(
 class Connection
 {
 
-	protected $connection = FALSE;
+	/** @var IDatabaseConnection $connection */
+	protected $connection;
 	protected $driver = FALSE;
 	protected $host = FALSE;
 	protected $port = FALSE;
@@ -113,11 +114,12 @@ class Connection
 	}
 
 	/**
-	 * query the database, return a resultset
+	 * query the database, return a result array.
 	 *
 	 * @param String|array $query
 	 * @param array|bool|QueryExtender $filters
 	 * @param array|bool $arrLikeFilters
+	 * @param string $orderStatement
 	 * @return array
 	 */
 	public function select($query, $filters = FALSE, $arrLikeFilters = FALSE, $orderStatement = "")

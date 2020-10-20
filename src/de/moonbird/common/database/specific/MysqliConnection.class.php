@@ -1,5 +1,6 @@
 <?php
-uses('de.moonbird.interfaces.common.database.IDatabaseConnection');
+uses('de.moonbird.interfaces.common.database.IDatabaseConnection',
+	'de.moonbird.common.database.Connection');
 
 class MysqliConnection extends Connection implements IDatabaseConnection
 {
@@ -10,7 +11,7 @@ class MysqliConnection extends Connection implements IDatabaseConnection
 	private $arrBindParameters = FALSE;
 
 	/**
-	 * MysqlConnection implements constructor.
+	 * MysqliConnection implements constructor.
 	 *
 	 * @param Connection $parent
 	 */
@@ -42,14 +43,12 @@ class MysqliConnection extends Connection implements IDatabaseConnection
 	/**
 	 * Return a record-set
 	 *
-	 * @param String $query *
+	 * @param String $query
 	 *
 	 * @return boolean|array
 	 */
-	public function select($query)
+	public function select($query, $filters = FALSE, $arrLikeFilters = FALSE, $orderStatement = "")
 	{
-
-
 		if ($this->arrBindParameters)
 		{
 			$statement = $this->internalConnection->prepare($query);
@@ -93,7 +92,7 @@ class MysqliConnection extends Connection implements IDatabaseConnection
 			{
 				$statement = $this->internalConnection->prepare($query);
 				$this->executeBind($statement);
-				$statement->execute();
+        $statement->execute();
 			} else {
 				$statement = $this->internalConnection->query($query);
 			}
@@ -155,18 +154,14 @@ class MysqliConnection extends Connection implements IDatabaseConnection
 			foreach ($this->arrBindParameters as $param)
 			{
 				$typeString .= $param['type'];
-				print $param['type'] . '<br />';
 			}
 			$bindParameterArray[] = $typeString;
 
 			foreach ($this->arrBindParameters as $param)
 			{
 				$bindParameterArray[] = &$param['value'];
-				print $param['value'] . '<br />';
 			}
-			print_r($statement);
 			call_user_func_array(array($statement, 'bind_param'), $bindParameterArray);
-
 		}
 	}
 
@@ -184,6 +179,9 @@ class MysqliConnection extends Connection implements IDatabaseConnection
 			$table, $this->parent->database);
 
 		return $this->select($query);
+	}
 
+	public function getRealConnection() {
+		return $this->internalConnection;
 	}
 }
