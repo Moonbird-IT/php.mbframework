@@ -34,6 +34,14 @@ abstract class AbstractViewController
     $this->arrHeadIncludes[]= $directive;
   }
 
+  protected function addScript ($scriptPath) {
+    $this->arrHeadIncludes[]= '<script src="'.$scriptPath.'"></script>';
+  }
+
+  protected function addStylesheet ($styleSheet) {
+    $this->arrHeadIncludes[]= '<link rel="stylesheet" href="'.$styleSheet.'"/>';
+  }
+
   private function escapeInput($variable)
   {
     return str_replace(array(';', '\\', "'"), '', $variable);

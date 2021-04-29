@@ -1,5 +1,5 @@
 # mbframework
-Moonbird framework, lightweight PHP framework
+Moonbird framework, light-weight PHP framework
 
 ### Installation and getting started
 

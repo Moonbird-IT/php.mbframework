@@ -65,15 +65,15 @@ class Connection
 	{
 		// check the required class to be loaded
 		if (strlen($url) > 0) {
-			preg_match('|(\w*)://([\w\.-]*)(\\\\\w*)?[:\/]?(\d*)\/([\w\-\.]*)\?([\w-]*)=(.*)|', $url, $urlParts);
+			preg_match('|(\\w*):\/\/([\\w.-]*)[:\\/]?(\\d*)((?:\\\\)[\\w]+)?\\/([\\w\\-\\.]*)\\?([\\w-]*)=([\\w\\d.$§%-]*)|', $url, $urlParts);
 			// we should now have an array with 8 elements:
 			// orig. url, driver, database, port (if applicable), empty field,
 			// database name, username and password
 			if (count($urlParts) > 7) {
 				$this->driver = $urlParts[1];
 				$this->host = $urlParts[2];
-				$this->instance = trim(str_replace('\\', '', $urlParts[3]));
-				$this->port = $urlParts[4];
+				$this->instance = trim(str_replace('\\', '', $urlParts[4]));
+        $this->port = $urlParts[3];
 				$this->database = $urlParts[5];
 				$this->username = $urlParts[6];
 				$this->password = $urlParts[7];

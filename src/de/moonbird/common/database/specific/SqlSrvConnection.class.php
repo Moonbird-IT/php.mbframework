@@ -1,4 +1,6 @@
 <?php
+uses('de.moonbird.interfaces.common.database.IDatabaseConnection');
+
 class SqlSrvConnection extends Connection implements IDatabaseConnection
 {
   private $parent = FALSE;
