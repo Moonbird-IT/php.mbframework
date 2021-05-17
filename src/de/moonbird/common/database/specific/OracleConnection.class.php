@@ -34,8 +34,9 @@ class OracleConnection extends Connection
    *
    * @param String $query
    * @return Array
+   * TODO: refactor currently unused parameters
    */
-  public function select($query)
+  public function select($query, $filters = false, $arrLikeFilters = false, $orderStatement = '')
   {
     // in case a string has been passed, convert it to an array with 1 element
     $queries = is_array($query) ? $query : array($query);
@@ -142,11 +143,20 @@ class OracleConnection extends Connection
     return $arrResult;
   }
 
+  /**
+   * Bind a set of parameters to a query
+   * @param $arrParameters
+   */
   public function bindParameters($arrParameters)
   {
     $this->arrBindParameters = $arrParameters;
   }
 
+
+  /**
+   * Execute bound statement and bind named placeholders
+   * @param $statement
+   */
   private function executeBind(&$statement)
   {
     if (is_array($this->arrBindParameters)) {
@@ -156,6 +166,12 @@ class OracleConnection extends Connection
     }
   }
 
-}
+  /**
+   * Return the internal Oracle connection instance
+   * @return bool|resource
+   */
+  public function getWrappedConnection() {
+    return $this->internalConnection;
+  }
 
-?>
+}

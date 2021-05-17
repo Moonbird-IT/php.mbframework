@@ -6,7 +6,7 @@ uses ('de.moonbird.common.configuration.Configuration');
 
 class DatabaseConfiguration extends Configuration
 {
-  static function get () {
+  static function get ($key=null) {
     $argv = func_get_args();
     $key= $argv[0];
 
@@ -23,4 +23,3 @@ class DatabaseConfiguration extends Configuration
     }
   }
 }
-?>

@@ -8,13 +8,6 @@ abstract class Registry {
 
   public static $registry = array();
 
-  public static function getInstance() {
-    if (null === self::$instance) {
-      self::$instance = new self;
-    }
-    return self::$instance;
-  }
-
   public static function has($key) {
     if (isset(self::$registry[$key])) {
       return true;
@@ -23,12 +16,16 @@ abstract class Registry {
   }
 
   public static function set($key, $value) {
+    self::$registry[$key] = $value;
+    return true;
+    /*
     if (!self::has($key)) {
       self::$registry[$key] = $value;
       return true;
     } else {
       throw new Exception('Variable ' . $key . ' already set');
     }
+    */
   }
 
   public static function get($key) {
@@ -36,6 +33,10 @@ abstract class Registry {
       return self::$registry[$key];
     }
     return null;
+  }
+
+  public static function remove($key) {
+    unset(self::$registry[$key]);
   }
 
   /**
@@ -57,5 +58,3 @@ abstract class Registry {
   }
 
 }
-
-?>

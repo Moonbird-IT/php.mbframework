@@ -10,7 +10,7 @@ class MssqlConnection extends Connection
   public function __construct($parent)
   {
     $this->parent = $parent;
-    $this->internalConnection = mssql_connect(
+     $this->internalConnection = mssql_connect(
       $this->parent->host,
       $this->parent->username,
       $this->parent->password);

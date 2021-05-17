@@ -4,7 +4,7 @@
  */
 abstract class Configuration
 {
-  static function get()
+  static function get($key=null)
   {
     $argc = func_num_args();
     $argv = func_get_args();
@@ -22,7 +22,6 @@ abstract class Configuration
       }
       return $value;
     }
+    return NULL;
   }
 }
-
-?>

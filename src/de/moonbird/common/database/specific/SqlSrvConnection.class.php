@@ -17,6 +17,11 @@ class SqlSrvConnection extends Connection implements IDatabaseConnection
 			'UID' => $this->parent->username,
 			'PWD' => $this->parent->password
 		);
+
+	if ($this->parent->instance !== '') {
+		$this->parent->host .= '\\' . $this->parent->instance;
+	}
+
 		$this->internalConnection = sqlsrv_connect(
 			$this->parent->host, $connectInfo);
 
@@ -33,8 +38,9 @@ class SqlSrvConnection extends Connection implements IDatabaseConnection
 	 *
 	 * @param String $query
 	 * @return array
+   * TODO: refactor currently unused parameters
 	 */
-	public function select($query)
+	public function select($query, $filters = false, $arrLikeFilters = false, $orderStatement = '')
 	{
 		// in case a string has been passed, convert it to an array with 1 element
 		$queries = is_array($query) ? $query : array($query);

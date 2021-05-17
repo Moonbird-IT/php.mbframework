@@ -1,5 +1,4 @@
 <?php
-
 /**
  * AbstractViewController
  *
@@ -9,8 +8,7 @@
  * showing the assigned view. All content will be output as soon as the loadView() function
  * has been called (will normally be part of the run() function).
  * TODO: structure is currently too loose and no defaults are defined; rewrite to use defaults
- * @author Sascha Meyer Moonbird IT
- * @version 1.1
+ * @author Sascha Meyer
  * @package Web
  */
 uses(
@@ -19,27 +17,31 @@ uses(
 
 abstract class AbstractViewController
 {
-  protected $arrHeadIncludes= array();
-  public $viewData= array();
+  protected $arrHeadIncludes = array();
+  public $viewData = array();
 
-  public function loadView($name, $relativeToController = FALSE) {
-	if (!$relativeToController) {  
-	  include (str_replace('.', DIRECTORY_SEPARATOR, 'src.'.$name).'View.php');
+  public function loadView($name, $relativeToController = FALSE)
+  {
+    if (!$relativeToController) {
+      include(str_replace('.', DIRECTORY_SEPARATOR, 'src.' . $name) . 'View.php');
     } else {
-	  include (str_replace('.', DIRECTORY_SEPARATOR, $name).'View.php');
-	}
+      include(str_replace('.', DIRECTORY_SEPARATOR, $name) . 'View.php');
+    }
   }
 
-  protected function addHeadInclude ($directive) {
-    $this->arrHeadIncludes[]= $directive;
+  protected function addHeadInclude($directive)
+  {
+    $this->arrHeadIncludes[] = $directive;
   }
 
-  protected function addScript ($scriptPath) {
-    $this->arrHeadIncludes[]= '<script src="'.$scriptPath.'"></script>';
+  protected function addScript($scriptPath)
+  {
+    $this->addHeadInclude('<script src="' . $scriptPath . '"></script>');
   }
 
-  protected function addStylesheet ($styleSheet) {
-    $this->arrHeadIncludes[]= '<link rel="stylesheet" href="'.$styleSheet.'"/>';
+  protected function addStylesheet($styleSheet)
+  {
+    $this->addHeadInclude('<link rel="stylesheet" href="' . $styleSheet . '"/>');
   }
 
   private function escapeInput($variable)
@@ -55,13 +57,15 @@ abstract class AbstractViewController
    */
   public abstract function run();
 
-  protected function head() {
-    $headDirectives= implode("\n", $this->arrHeadIncludes);
-    include (Configuration::get('layout', 'html', 'header'));
+  protected function head()
+  {
+    $headDirectives = implode("\n", $this->arrHeadIncludes);
+    include(Configuration::get('layout', 'html', 'header'));
   }
 
-  protected function foot() {
-    include (Configuration::get('layout', 'html', 'footer'));
+  protected function foot()
+  {
+    include(Configuration::get('layout', 'html', 'footer'));
   }
 
   /**
@@ -69,8 +73,14 @@ abstract class AbstractViewController
    * @param string $name
    * @param mixed $content
    */
-  protected function addVariable ($name, $content) {
-    $this->viewData[$name]= $content;
+  protected function addVariable($name, $content)
+  {
+    $this->viewData[$name] = $content;
+  }
+
+  protected function get($name)
+  {
+    return array_key_exists($name, $this->viewData) ? $this->viewData[$name] : null;
   }
 
 }

@@ -8,18 +8,19 @@ abstract class FormBuilder
 {
   public static function fillSelectFromArray($arrValues, $arrSelected)
   {
-    asort($arrValues);
+	if (isset($arrValues) && !empty($arrValues)){
+		asort($arrValues);
+	}
 
     // in case a value has been passed, but it is not an array, create an array of it
     if ($arrSelected != '' && !is_array($arrSelected)) {
       $arrSelected= array($arrSelected => $arrSelected);
     }
-    print_r($arrSelected);
     $strOptions = '';
     try {
       if (is_array($arrValues)) {
         foreach ($arrValues as $key =>$value) {
-          if (array_key_exists($key, $arrSelected)) {
+          if (isset($arrSelected) && is_array($arrSelected) && array_key_exists($key, $arrSelected)) {
             $strOptions .= sprintf('<option value="%s" selected="selected">%s</option>' . "\n",
               $key, $value);
           } else {

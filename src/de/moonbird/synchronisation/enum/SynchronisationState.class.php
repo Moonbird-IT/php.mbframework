@@ -12,5 +12,5 @@ class SynchronisationState
   const INTERRUPTED=5;
   const FINISHEDWITHERRORS=6;
   const CONNECTFAILED=7;
+  const NETWORKFAILED=8;
 }
-?>

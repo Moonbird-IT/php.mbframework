@@ -22,6 +22,11 @@ function depends()
 function uses()
 {
   $funcArgs = func_get_args();
+  if (count($funcArgs) == 0) {
+    throw new IllegalArgumentException ('uses() expects at least one argument',
+      ExceptionCode::IA_MISSINGARGUMENT);
+  }
+
   foreach ($funcArgs as $arg) {
     include_once ('src' . DIRECTORY_SEPARATOR . str_replace('.', DIRECTORY_SEPARATOR, strtolower($arg)) . '.class.php');
   }

@@ -20,7 +20,7 @@ abstract class AbstractDatabaseModel
 
   public function getLastMessage()
   {
-    return $this->connection->lastMessage();
+    return trim($this->connection->lastMessage());
   }
 
   public function sort($field, $order = 'ASC') {

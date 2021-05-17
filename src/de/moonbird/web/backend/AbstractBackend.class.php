@@ -17,6 +17,7 @@ abstract class AbstractBackend
 
   protected function setResponse ($response) {
     $this->response= $response;
+    ResponseFactory::create('json');
   }
 
   protected function isInitialized () {

@@ -17,7 +17,6 @@ abstract class AbstractLdapModel
     $this->connection = $connection;
   }
 
-
   public function getLastMessage()
   {
     return $this->connection->lastMessage();
