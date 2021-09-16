@@ -19,3 +19,11 @@ configuration files will be loaded from the "prod" sub-directory.
 
 * the MSSQL driver currently uses the removed mssql_* functions deprecated in PHP 5.2x and removed in PHP 5.3x;
   use the SqlSrv version instead.
+
+## Change log
+
+### 2021-09-16:
+- added JSON_INVALID_UTF8_IGNORE flag to JsonResponse to avoid errors when encoding invalid JSON
+- added secondsToHourString($seconds) to DateUtil
+- extended database classes and added interface IDatabaseConnection
+- added support to load the Persohub framework in framework loader

@@ -2,10 +2,11 @@
 uses(
 	'de.moonbird.common.database.enum.ConnectionState',
 	'de.moonbird.common.array.ArrayUtil',
-	'de.moonbird.common.database.extender.QueryExtender'
+	'de.moonbird.common.database.extender.QueryExtender',
+	'de.moonbird.interfaces.common.database.IDatabaseConnection'
 );
 
-class Connection
+class Connection implements IDatabaseConnection
 {
 
 	/** @var IDatabaseConnection $connection */
@@ -310,4 +311,12 @@ class Connection
 	public function getInternalConnection() {
 		return $this->connection;
 	}
+
+	public function query($query, $typeMap = []) {
+	  return $this->connection->query($query,$typeMap);
+  }
+
+  public function fetch($stmt) {
+	  return $this->connection->fetch($stmt);
+  }
 }

@@ -140,4 +140,17 @@ class SqlSrvConnection extends Connection implements IDatabaseConnection
 	{
 		// TODO: Implement bindParameters() method.
 	}
+
+	public function query($query, $typeMap = FALSE) {
+	  return sqlsrv_query($this->internalConnection, $query);
+  }
+
+  public function fetch($stmt) {
+	  try {
+      return sqlsrv_fetch_array($stmt);
+    } catch (Exception $ex) {
+	    error_log('Failed reading data from statement, message was: '.$ex->getMessage());
+	    return FALSE;
+    }
+  }
 }

@@ -1,5 +1,5 @@
 <?php
-class MssqlConnection extends Connection implements IDatabaseConnection
+class MssqlConnection extends Connection
 {
   private $parent = FALSE;
   private $internalConnection = FALSE;
@@ -10,10 +10,18 @@ class MssqlConnection extends Connection implements IDatabaseConnection
   public function __construct($parent)
   {
     $this->parent = $parent;
-     $this->internalConnection = mssql_connect(
-      $this->parent->host,
-      $this->parent->username,
-      $this->parent->password);
+    if ($this->parent->instance != '') {
+      $this->internalConnection = mssql_connect(
+        $this->parent->host.'\\'.$this->parent->instance,
+        $this->parent->username,
+        $this->parent->password);
+
+    } else {
+      $this->internalConnection = mssql_connect(
+        $this->parent->host,
+        $this->parent->username,
+        $this->parent->password);
+    }
 
     if ($this->internalConnection) {
       if (mssql_select_db('[' . $this->parent->database . ']', $this->internalConnection)) {

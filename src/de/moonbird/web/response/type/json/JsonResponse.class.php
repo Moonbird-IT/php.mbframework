@@ -18,6 +18,6 @@ class JsonResponse extends BaseResponse
     print json_encode(array('status' => $this->status,
         'data' => $this->data,
         'additional' => $this->additionalData)
-    );
+    , JSON_INVALID_UTF8_IGNORE);
   }
 }

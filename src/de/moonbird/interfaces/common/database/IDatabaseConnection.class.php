@@ -24,4 +24,8 @@ interface IDatabaseConnection
 	public function showTables();
 
 	public function showColumns($table);
+
+	public function query($query, $typeMap = FALSE);
+
+	public function fetch($stmt);
 }

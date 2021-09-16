@@ -5,7 +5,7 @@
  * and open the template in the editor.
  */
 
-class OracleConnection extends Connection
+class OracleConnection extends Connection implements IDatabaseConnection
 {
 
   private $parent = FALSE;
@@ -174,4 +174,22 @@ class OracleConnection extends Connection
     return $this->internalConnection;
   }
 
+  public function query($query, $typeMap = [])
+  {
+    $stmt= oci_parse($this->internalConnection, $query);
+    if ($stmt) {
+      return oci_execute($stmt);
+    } else {
+      return FALSE;
+    }
+  }
+
+  public function fetch($stmt) {
+    try {
+      return oci_fetch_array($stmt);
+    } catch (Exception $ex) {
+      error_log('Failed reading data from statement, message was: '.$ex->getMessage());
+      return FALSE;
+    }
+  }
 }

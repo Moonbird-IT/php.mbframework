@@ -30,4 +30,8 @@ abstract class AbstractDatabaseModel
     return $sorter->sort($this->data);
   }
 
+  public function fetch ($stmt) {
+    return $this->connection->fetch($stmt);
+  }
+
 }
