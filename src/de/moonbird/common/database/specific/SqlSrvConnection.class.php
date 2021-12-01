@@ -53,7 +53,7 @@ class SqlSrvConnection extends Connection implements IDatabaseConnection
 				$this->parent->message = print_r(sqlsrv_errors(), TRUE);
 				return FALSE;
 			} else {
-				while ($row = sqlsrv_fetch_array ($res)) {
+				while ($row = sqlsrv_fetch_array ($res, ($this->fetchStyle !== NULL ? $this->fetchStyle : SQLSRV_FETCH_BOTH))) {
 					$result[] = $row;
 				}
 				return $result;
@@ -147,7 +147,7 @@ class SqlSrvConnection extends Connection implements IDatabaseConnection
 
   public function fetch($stmt) {
 	  try {
-      return sqlsrv_fetch_array($stmt);
+      return sqlsrv_fetch_array($stmt, ($this->fetchStyle !== NULL ? $this->fetchStyle : SQLSRV_FETCH_BOTH));
     } catch (Exception $ex) {
 	    error_log('Failed reading data from statement, message was: '.$ex->getMessage());
 	    return FALSE;

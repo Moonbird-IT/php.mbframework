@@ -1,5 +1,13 @@
 # mbframework
-Moonbird framework, light-weight PHP framework
+Moonbird framework, light-weight PHP framework.
+
+This framework is used to build mainly console and simple web applications for internal use. 
+
+___It does not incorporate any modern PHP functions nor is it secure. Use it solely to simplify your workflows or to
+work on demo applications.___
+
+### Requirements
+- PHP 7.2 or above (most functionality will still run on old versions down to PHP 5.2, though)
 
 ### Installation and getting started
 
@@ -21,6 +29,11 @@ configuration files will be loaded from the "prod" sub-directory.
   use the SqlSrv version instead.
 
 ## Change log
+
+### 2021-11-30:
+- added setting fetch style for SqlSrvConnection class
+- added ignore invalid UTF8 in JsonResponse class
+- added possibility to load different header and footer files in AbstractViewController
 
 ### 2021-09-16:
 - added JSON_INVALID_UTF8_IGNORE flag to JsonResponse to avoid errors when encoding invalid JSON

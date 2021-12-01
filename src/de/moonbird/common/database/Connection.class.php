@@ -22,6 +22,7 @@ class Connection implements IDatabaseConnection
 	public $message = FALSE;
 	public $lastQuery = '';
 	protected $state = ConnectionState::INITIAL;
+  protected $fetchStyle = NULL;
 
 	// logging actions
 	private $boolLoggingActive = FALSE;
@@ -318,5 +319,17 @@ class Connection implements IDatabaseConnection
 
   public function fetch($stmt) {
 	  return $this->connection->fetch($stmt);
+  }
+
+  /**
+   * Can be used on the internal database connection class to set the fetch style for a query.
+   * @param string $fetchStyle
+   */
+  public function setFetchStyle($fetchStyle) {
+    $this->fetchStyle = $fetchStyle;
+  }
+
+  public function resetFetchStyle() {
+    $this->fetchStyle = NULL;
   }
 }

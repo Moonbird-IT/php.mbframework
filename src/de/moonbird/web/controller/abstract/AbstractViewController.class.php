@@ -20,6 +20,14 @@ abstract class AbstractViewController
   protected $arrHeadIncludes = array();
   public $viewData = array();
 
+  /**
+   * Needs to be implemented by all controllers. Main handler to be automatically called by central controller handler.
+   *
+   * @abstract
+   * @return mixed
+   */
+  public abstract function run();
+
   public function loadView($name, $relativeToController = FALSE)
   {
     if (!$relativeToController) {
@@ -49,23 +57,16 @@ abstract class AbstractViewController
     return str_replace(array(';', '\\', "'"), '', $variable);
   }
 
-  /**
-   * Needs to be implemented by all controllers
-   *
-   * @abstract
-   * @return mixed
-   */
-  public abstract function run();
-
-  protected function head()
+  protected function head($header = 'header')
   {
+
     $headDirectives = implode("\n", $this->arrHeadIncludes);
-    include(Configuration::get('layout', 'html', 'header'));
+    include(Configuration::get('layout', 'html', $header));
   }
 
-  protected function foot()
+  protected function foot($footer = 'footer')
   {
-    include(Configuration::get('layout', 'html', 'footer'));
+    include(Configuration::get('layout', 'html', $footer));
   }
 
   /**
