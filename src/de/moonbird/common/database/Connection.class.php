@@ -326,10 +326,10 @@ class Connection implements IDatabaseConnection
    * @param string $fetchStyle
    */
   public function setFetchStyle($fetchStyle) {
-    $this->fetchStyle = $fetchStyle;
+    $this->connection->fetchStyle = $fetchStyle;
   }
 
   public function resetFetchStyle() {
-    $this->fetchStyle = NULL;
+    $this->connection->fetchStyle = NULL;
   }
 }
