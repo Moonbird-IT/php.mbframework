@@ -25,12 +25,13 @@ class LdapConnection
    * @return bool|LdapConnection
    */
   public function __construct($url) {
+
     // check the required class to be loaded
     if (strlen($url) > 0) {
-      preg_match('|([\w\d\-\._]*)[:/]?(\d*)/{([\d\w-=,]*)}\?([\w\d]*)(@[\w\d.]*)=(.*)|', $url, $urlParts);
-      // we should now have an array with 8 elements:
-      // orig. url, driver, database, port (if applicable), empty field,
-      // database name, username and password
+      preg_match('|([\w._-]*)[:/]?(\d*)/{([\w=,-]*)}\?([\w]*)(@[\w.-]*)=(.*)|', $url, $urlParts);
+      // we should now have an array with 6 elements:
+      // server, port (if applicable), DC,
+      // username, domain and password
       if (count($urlParts) > 5) {
         $this->host = $urlParts[1];
         $this->port = ($urlParts[2] != '') ? $urlParts[2] : 389;
@@ -112,5 +113,3 @@ class LdapConnection
   }
 
 }
-
-?>

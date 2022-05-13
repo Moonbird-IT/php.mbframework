@@ -11,6 +11,11 @@ class OracleConnection extends Connection implements IDatabaseConnection
   private $parent = FALSE;
   private $internalConnection = FALSE;
   private $arrBindParameters = FALSE;
+  protected $mapFetchStyle = array(
+    DatabaseFetchStyle::FETCH_BOTH => OCI_BOTH,
+    DatabaseFetchStyle::FETCH_ASSOC => OCI_ASSOC,
+    DatabaseFetchStyle::FETCH_ARRAY =>  OCI_NUM
+  );
 
   public function __construct($parent)
   {
@@ -174,7 +179,7 @@ class OracleConnection extends Connection implements IDatabaseConnection
     return $this->internalConnection;
   }
 
-  public function query($query, $typeMap = [])
+  public function query($query, $typeMap = array())
   {
     $stmt= oci_parse($this->internalConnection, $query);
     if ($stmt) {

@@ -1,6 +1,8 @@
 <?php
 uses('de.moonbird.interfaces.common.database.IDatabaseConnection');
 
+trigger_error("The MySQL connection class is no longer supported", E_ERROR);
+
 class MysqlConnection extends Connection implements IDatabaseConnection
 {
 	private $parent = FALSE;
@@ -36,7 +38,7 @@ class MysqlConnection extends Connection implements IDatabaseConnection
 	 * @param String $query
 	 * @return array
 	 */
-	public function select($query)
+	public function select($query, $filters = FALSE, $arrLikeFilters = FALSE, $orderStatement = "")
 	{
 		// in case a string has been passed, convert it to an array with 1 element
 		$queries = is_array($query) ? $query : array($query);

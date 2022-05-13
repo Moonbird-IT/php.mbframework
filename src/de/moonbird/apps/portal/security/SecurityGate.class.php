@@ -21,9 +21,14 @@ class SecurityGate
   private $user = FALSE;
   private $pass= FALSE;
   private $stayLoggedIn= FALSE;
+  private $legacyMode = FALSE;
 
   public function __construct($connection) {
     $this->connection= $connection;
+  }
+
+  public function enableLegacyMode($value) {
+    $this->legacyMode = $value;
   }
 
   public function setUser($user)
@@ -106,7 +111,11 @@ class SecurityGate
       $crypt = new SimpleCrypt();
       $crypt->setSecret(Configuration::get('crypt', 'cookie_secret'));
       // if user has a cookie but the authentication fails, invalidate cookie
-      if (isset($_COOKIE["username"]) && $_COOKIE["accesskey"] != $crypt->encrypt(base64_decode($_COOKIE["username"]))
+      $user= base64_decode($_COOKIE["username"]);
+      if ($this->legacyMode) {
+        $user = $_COOKIE["username"];
+      }
+      if (isset($_COOKIE["username"]) && $_COOKIE["accesskey"] != $crypt->encrypt($user)
         ) {
         //print $crypt->encrypt(base64_decode($_COOKIE["username"]))."<br />";
         //print $_COOKIE["accesskey"]."<br />";

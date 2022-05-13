@@ -15,9 +15,15 @@ class JsonResponse extends BaseResponse
   public function respond()
   {
 	  header('Content-type: application/json');
-    print json_encode(array('status' => $this->status,
-        'data' => $this->data,
-        'additional' => $this->additionalData)
-    , JSON_INVALID_UTF8_IGNORE);
+    if (phpversion() >= '7.2') {
+      print json_encode(array('status' => $this->status,
+          'data' => $this->data,
+          'additional' => $this->additionalData),
+        JSON_INVALID_UTF8_IGNORE);
+    } else {
+      print json_encode(array('status' => $this->status,
+          'data' => $this->data,
+          'additional' => $this->additionalData));
+    }
   }
 }

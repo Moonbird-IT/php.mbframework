@@ -1,12 +1,14 @@
 <?php
 uses(
 	'de.moonbird.common.database.enum.ConnectionState',
+	'de.moonbird.common.database.enum.DatabaseFetchStyle',
 	'de.moonbird.common.array.ArrayUtil',
 	'de.moonbird.common.database.extender.QueryExtender',
-	'de.moonbird.interfaces.common.database.IDatabaseConnection'
+	'de.moonbird.interfaces.common.database.IDatabaseFacade',
+  'de.moonbird.interfaces.common.database.IDatabaseConnection'
 );
 
-class Connection implements IDatabaseConnection
+class Connection implements IDatabaseFacade
 {
 
 	/** @var IDatabaseConnection $connection */
@@ -23,6 +25,7 @@ class Connection implements IDatabaseConnection
 	public $lastQuery = '';
 	protected $state = ConnectionState::INITIAL;
   protected $fetchStyle = NULL;
+  protected $arrFilter = array();
 
 	// logging actions
 	private $boolLoggingActive = FALSE;
@@ -48,14 +51,6 @@ class Connection implements IDatabaseConnection
 		return file_get_contents("query.log");
 	}
 
-	private function addToQueryLog($query)
-	{
-		if ($this->boolLoggingActive) {
-			file_put_contents("query.log", $query . "\r\n", FILE_APPEND);
-		}
-	}
-
-	protected $arrFilter = array();
 
 	/**
 	 * Returns a new Connection class object
@@ -67,7 +62,7 @@ class Connection implements IDatabaseConnection
 	{
 		// check the required class to be loaded
 		if (strlen($url) > 0) {
-			preg_match('|(\\w*):\/\/([\\w.-]*)[:\\/]?(\\d*)((?:\\\\)[\\w]+)?\\/([\\w\\-\\.]*)\\?([\\w-]*)=([\\w\\d.$§%-]*)|', $url, $urlParts);
+			preg_match('|(\\w*):\/\/([\\w.-]*)[:\\/]?(\\d*)((?:\\\\)[\\w]+)?\\/([\\w\\-\\.]*)\\?([\\w-]*)=([\\w\\d.$ï¿½%-]*)|', $url, $urlParts);
 			// we should now have an array with 8 elements:
 			// orig. url, driver, database, port (if applicable), empty field,
 			// database name, username and password
@@ -200,11 +195,16 @@ class Connection implements IDatabaseConnection
 		$this->lastQuery = $query;
 		$this->addToQueryLog($query);
 
-		return $this->connection->select($query);
+		$data = $this->connection->select($query);
+
+    // reset the fetch style to avoid issues with subsequent
+    $this->setFetchStyle(DatabaseFetchStyle::FETCH_BOTH);
+
+    return $data;
 	}
 
 	/**
-	 * Return a single row from the result set or false in case of no or too many rows
+	 * Return a single row from the result set or false in case of no rows or too many rows.
 	 * @param String $query
 	 * @param array|bool|QueryExtender $filters
 	 * @param array|bool $arrLikeFilters
@@ -313,8 +313,8 @@ class Connection implements IDatabaseConnection
 		return $this->connection;
 	}
 
-	public function query($query, $typeMap = []) {
-	  return $this->connection->query($query,$typeMap);
+	public function query($query, $typeMap = array()) {
+    return $this->connection->query($query,$typeMap);
   }
 
   public function fetch($stmt) {
@@ -326,10 +326,21 @@ class Connection implements IDatabaseConnection
    * @param string $fetchStyle
    */
   public function setFetchStyle($fetchStyle) {
-    $this->connection->fetchStyle = $fetchStyle;
+    $this->connection->fetchStyle = $this->getSpecificFetchStyle($fetchStyle);
   }
 
   public function resetFetchStyle() {
     $this->connection->fetchStyle = NULL;
+  }
+
+  private function getSpecificFetchStyle($fetchStyle) {
+    return isset($this->connection->mapFetchStyle[$fetchStyle]) ? $this->connection->mapFetchStyle[$fetchStyle] : $this->connection->mapFetchStyle[DatabaseFetchStyle::FETCH_BOTH];
+  }
+
+  private function addToQueryLog($query)
+  {
+    if ($this->boolLoggingActive) {
+      file_put_contents("query.log", $query . "\r\n", FILE_APPEND);
+    }
   }
 }

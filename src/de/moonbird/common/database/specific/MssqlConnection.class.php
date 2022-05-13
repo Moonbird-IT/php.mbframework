@@ -1,4 +1,7 @@
 <?php
+
+trigger_error("The MSSQL connection class is no longer supported", E_ERROR);
+
 class MssqlConnection extends Connection implements IDatabaseConnection
 {
   private $parent = FALSE;

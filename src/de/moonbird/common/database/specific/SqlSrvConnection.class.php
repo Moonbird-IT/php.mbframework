@@ -1,10 +1,14 @@
 <?php
-uses('de.moonbird.interfaces.common.database.IDatabaseConnection');
 
 class SqlSrvConnection extends Connection implements IDatabaseConnection
 {
   private $parent = FALSE;
   private $internalConnection = FALSE;
+  protected $mapFetchStyle = array(
+    DatabaseFetchStyle::FETCH_BOTH => SQLSRV_FETCH_BOTH,
+    DatabaseFetchStyle::FETCH_ASSOC => SQLSRV_FETCH_ASSOC,
+    DatabaseFetchStyle::FETCH_ARRAY => SQLSRV_FETCH_NUMERIC
+  );
 
 	/**
 	 * @param Connection $parent
@@ -37,7 +41,7 @@ class SqlSrvConnection extends Connection implements IDatabaseConnection
 	 * Return a recordset
 	 *
 	 * @param String $query
-	 * @return array
+	 * @return boolean|array
    * TODO: refactor currently unused parameters
 	 */
 	public function select($query, $filters = false, $arrLikeFilters = false, $orderStatement = '')
@@ -56,9 +60,11 @@ class SqlSrvConnection extends Connection implements IDatabaseConnection
 				while ($row = sqlsrv_fetch_array ($res, ($this->fetchStyle !== NULL ? $this->fetchStyle : SQLSRV_FETCH_BOTH))) {
 					$result[] = $row;
 				}
-				return $result;
 			}
 		}
+
+    // Return all query results
+    return $result;
 	}
 
   public function execute($query)
