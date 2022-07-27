@@ -1,14 +1,7 @@
 <?php
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
-/**
- * Description of PageInterface
- *
- * @author XDE11069
- */
+throw new Exception("This controller is no longer supported", -2017);
+
 abstract class AbstractController {
   private $view= FALSE;
   private $handlers= array();

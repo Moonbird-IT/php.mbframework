@@ -4,7 +4,7 @@
  * Date: 16.04.2015
  * Time: 16:27
  * @version: $Id$
- * Purpose: 
+ * Purpose: file-system related functionality, i.e. creating safe file names.
  */
 
 class FSHelper {

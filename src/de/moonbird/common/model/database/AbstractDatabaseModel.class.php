@@ -34,4 +34,15 @@ abstract class AbstractDatabaseModel
     return $this->connection->fetch($stmt);
   }
 
+  /**
+   * Switch the fetch mode to return the matching data structure to the client.
+   * TODO: handle concurrency. Might overwrite the fetch style set in a different part of code.
+   *
+   * @param $fetchStyle
+   * @return void
+   */
+  public function setFetchStyle($fetchStyle) {
+    $this->connection->setFetchStyle($fetchStyle);
+  }
+
 }

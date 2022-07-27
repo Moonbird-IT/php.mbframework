@@ -93,6 +93,15 @@ abstract class ArrayUtil
     return $strResult;
   }
 
+  public static function getValuesWithoutKeys($array) {
+    $result = array();
+    if (is_array($array)) {
+      foreach ($array as $value) {
+        $value = is_array($value) ? self::getValuesWithoutKeys($value) : $value;
+        array_push($result, $value);
+      }
+      return $result;
+    }
+    return FALSE;
+  }
 }
-
-?>

@@ -62,7 +62,7 @@ class Connection implements IDatabaseFacade
 	{
 		// check the required class to be loaded
 		if (strlen($url) > 0) {
-			preg_match('|(\\w*):\/\/([\\w.-]*)[:\\/]?(\\d*)((?:\\\\)[\\w]+)?\\/([\\w\\-\\.]*)\\?([\\w-]*)=([\\w\\d.$�%-]*)|', $url, $urlParts);
+			preg_match('|(\\w*):\/\/([\\w.-]*)[:\\/]?(\\d*)((?:\\\\)[\\w]+)?\\/([\\w\\-\\.]*)\\?([\\w-]*)=([\\w\\d.$�%-]*)(?:&encoding=(\\w*))?|', $url, $urlParts);
 			// we should now have an array with 8 elements:
 			// orig. url, driver, database, port (if applicable), empty field,
 			// database name, username and password
@@ -74,6 +74,7 @@ class Connection implements IDatabaseFacade
 				$this->database = $urlParts[5];
 				$this->username = $urlParts[6];
 				$this->password = $urlParts[7];
+        $this->encoding = isset($urlParts[8]) ? $urlParts[8] : null;
 			} else {
 				return FALSE;
 			}

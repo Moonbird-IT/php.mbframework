@@ -4,18 +4,21 @@
  * store a list of variables and objects for use throughout the application.
  * Implemented as singleton
  */
-abstract class Registry {
+abstract class Registry
+{
 
   public static $registry = array();
 
-  public static function has($key) {
+  public static function has($key)
+  {
     if (isset(self::$registry[$key])) {
       return true;
     }
     return false;
   }
 
-  public static function set($key, $value) {
+  public static function set($key, $value)
+  {
     self::$registry[$key] = $value;
     return true;
     /*
@@ -28,14 +31,16 @@ abstract class Registry {
     */
   }
 
-  public static function get($key) {
+  public static function get($key)
+  {
     if (self::has($key)) {
       return self::$registry[$key];
     }
     return null;
   }
 
-  public static function remove($key) {
+  public static function remove($key)
+  {
     unset(self::$registry[$key]);
   }
 
@@ -44,14 +49,15 @@ abstract class Registry {
    *
    * @return String
    */
-  public static function getByArrayKeys () {
+  public static function getByArrayKeys()
+  {
     //
-    $args= func_get_args();
-    $argc= count($args);
-    if (count($argc>0)){
-      $subRegistry= self::$registry[$args[0]];
-      for ($i=1;$i<$argc;$i++) {
-        $subRegistry= $subRegistry[$args[$i]];
+    $args = func_get_args();
+    $argc = count($args);
+    if ($argc > 0) {
+      $subRegistry = self::$registry[$args[0]];
+      for ($i = 1; $i < $argc; $i++) {
+        $subRegistry = $subRegistry[$args[$i]];
       }
     }
     return $subRegistry;

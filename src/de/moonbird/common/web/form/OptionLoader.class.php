@@ -5,13 +5,16 @@
  * Date: 25.09.2014
  * Time: 12:01
  * @version: $Id$
- * Purpose: 
+ * @TODO: check implementation and compatibility.
  */
+
+trigger_error('OptionLoader should no longer be used.', E_USER_DEPRECATED);
+
 class OptionLoader
 {
   private $model = FALSE;
   private $function = FALSE;
-  private $collSelected = FALSE;
+  private $collSelected = array();
   private $valueField;
   private $displayField;
 
@@ -68,5 +71,4 @@ class OptionLoader
     }
     return $strOptions;
   }
-
 }

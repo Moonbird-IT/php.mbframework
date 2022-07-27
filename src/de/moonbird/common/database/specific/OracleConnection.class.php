@@ -17,6 +17,7 @@ class OracleConnection extends Connection implements IDatabaseConnection
     DatabaseFetchStyle::FETCH_ARRAY =>  OCI_NUM
   );
 
+  /** Connection $this->parent */
   public function __construct($parent)
   {
     $this->parent = $parent;
@@ -24,7 +25,8 @@ class OracleConnection extends Connection implements IDatabaseConnection
       $this->parent->username,
       $this->parent->password,
       $this->parent->host . ':' . $this->parent->port . '/' .
-      $this->parent->database);
+      $this->parent->database,
+      $this->parent->encoding !== '' ? $this->parent->encoding : null);
 
     if ($this->internalConnection) {
       $this->parent->state = ConnectionState::OPEN;
