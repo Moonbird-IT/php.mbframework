@@ -212,8 +212,15 @@ class MysqliConnection extends Connection implements IDatabaseConnection
     }
   }
 
+  /**
+   * Remove square brackets from MSSQL-style queries.
+   * @todo disabled, re-enable in a fool-proof way.
+   * @param string $query
+   * @return string
+   */
   private function escapeSpecialCharacters($query) {
-    return str_replace(array('[', ']'), array('`', '`'), $query);
+    return $query;
+    // return str_replace(array('[', ']'), array('`', '`'), $query);
   }
   //endregion
 }
