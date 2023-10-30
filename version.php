@@ -1,2 +1,2 @@
 <?php
-$mbFrameworkVersion = '1.8.1.1';
+$mbFrameworkVersion = '1.9.0.0';

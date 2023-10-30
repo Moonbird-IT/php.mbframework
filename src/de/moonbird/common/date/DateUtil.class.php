@@ -1,10 +1,17 @@
 <?php
 
-// simple date calculations
-
+/**
+ * Common date and time function helper class.
+ */
 class DateUtil
 {
 
+  /**
+   * Return the week's end date for a given week and year.
+   * @param int $week
+   * @param int $year
+   * @return false|string
+   */
   public static function getEndOfWeek($week, $year)
   {
     $Jan1 = mktime(1, 1, 1, 1, 1, $year);
@@ -13,12 +20,23 @@ class DateUtil
     return date('Y-m-d 00:00:00', $desiredSunday);
   }
 
+  /**
+   * Return the month's end date for a given month and year.
+   * @param int $month
+   * @param int $year
+   * @return string
+   */
   public static function getEndOfMonth($month, $year)
   {
     $time = mktime(1, 1, 1, $month + 1, 1, $year);
     return $year . '-' . date('m', $time) . '-01 00:00:00';
   }
 
+  /**
+   * Convert a duration represented as hour string into a number of seconds.
+   * @param int $timeString
+   * @return float|int|null
+   */
   public static function timeStringToNumber($timeString)
   {
 
@@ -44,6 +62,11 @@ class DateUtil
     }
   }
 
+  /**
+   * Convert fraction of a day into a duration represented as hour string.
+   * @param string $value
+   * @return array
+   */
   public static function numberToHourString($value)
   {
     if ($value < 0) {
@@ -53,6 +76,11 @@ class DateUtil
     return self::secondsToHourString($edSeconds);
   }
 
+  /**
+   * Convert seconds into a duration represented as hour string.
+   * @param int $edSeconds
+   * @return array
+   */
   public static function secondsToHourString($edSeconds) {
     // create an understandable time format
 
@@ -87,5 +115,31 @@ class DateUtil
     $strTime = $edHours . ":" . str_repeat('0', 2 - strlen($edMinutes)) . $edMinutes . ":" . str_repeat('0', 2 - strlen($edSec)) . $edSec;
 
     return array($strTime, $edSeconds);
+  }
+
+  /**
+   * Take a user given date representation and convert it to ISO-8601 date string.
+   * @throws InvalidArgumentException
+   * @param string $value
+   * @return false|string
+   */
+  public static function inputToIsoString($value) {
+    return self::inputToGivenFormat($value, 'Y-m-d\TH:i:s');
+  }
+
+  /**
+   * Take a user given date representation and convert it into given format.
+   * @param string $value
+   * @param string $format
+   * @return false|string
+   */
+  public static function inputToGivenFormat($value, $format) {
+    $date = strtotime($value);
+    if ($date) {
+      return date($format, $date);
+    } else {
+      throw new InvalidArgumentException('The passed value "'.$value.'" does not represent a valid date.');
+    }
+
   }
 }

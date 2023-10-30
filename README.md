@@ -21,22 +21,9 @@ name "**STAGE**" and a value referring to the to be used configuration folder. T
     STAGE=dev
     
 will make the framework load the configuration files found in folder "/etc/dev/". If the value does not exist, all 
-configuration files will be loaded from the "prod" sub-directory.
+configuration files will be loaded from the "prod" subdirectory.
 
 ### Deprecation notice
 
 * the MSSQL driver currently uses the removed mssql_* functions deprecated in PHP 5.2x and removed in PHP 5.3x;
   use the SqlSrv version instead.
-
-## Change log
-
-### 2021-11-30:
-- added setting fetch style for SqlSrvConnection class
-- added ignore invalid UTF8 in JsonResponse class
-- added possibility to load different header and footer files in AbstractViewController
-
-### 2021-09-16:
-- added JSON_INVALID_UTF8_IGNORE flag to JsonResponse to avoid errors when encoding invalid JSON
-- added secondsToHourString($seconds) to DateUtil
-- extended database classes and added interface IDatabaseConnection
-- added support to load the Persohub framework in framework loader

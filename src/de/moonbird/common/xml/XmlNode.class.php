@@ -5,9 +5,8 @@
  */
 
 /**
- * Description of XmlNode
- *
- * @author XDE11069
+ * XmlNode representation.
+ * @deprecated never completed, do not use.
  */
 class XmlNode {
     //put your code here
@@ -24,4 +23,3 @@ class XmlNode {
     }
   }
 }
-?>

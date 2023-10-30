@@ -5,9 +5,8 @@
  */
 
 /**
- * Description of xmlNode
- *
- * @author XDE11069
+ * Represents an XML document.
+ * @deprecated never completed, do not use.
  */
 class XmlDocument {
     //put your code here
@@ -21,4 +20,3 @@ class XmlDocument {
 
   }
 }
-?>
