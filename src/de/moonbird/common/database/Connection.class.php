@@ -35,12 +35,15 @@ class Connection implements IDatabaseFacade
 	 */
 	public function activateLogging()
 	{
-
 		$this->boolLoggingActive = TRUE;
 
 		// remove old contents from query log
 		@file_put_contents("query.log", "");
 	}
+
+  public function deactivateLogging() {
+    $this->boolLoggingActive = FALSE;
+  }
 
 	public function isLoggingActive() {
 		return $this->boolLoggingActive;

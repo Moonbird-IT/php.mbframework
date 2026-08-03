@@ -40,7 +40,7 @@ class OracleConnection extends Connection implements IDatabaseConnection
    * Return a recordset
    *
    * @param String $query
-   * @return Array
+   * @return Array|bool
    * TODO: refactor currently unused parameters
    */
   public function select($query, $filters = false, $arrLikeFilters = false, $orderStatement = '')
@@ -54,9 +54,7 @@ class OracleConnection extends Connection implements IDatabaseConnection
       $statement = oci_parse($this->internalConnection, $query);
       $this->executeBind($statement);
 
-      if (oci_execute($statement)) {
-
-      } else {
+      if (!oci_execute($statement)) {
         $this->parent->message = oci_error() . "\n>>> " . $query;
         debug_print_backtrace();
         return FALSE;
@@ -120,6 +118,7 @@ class OracleConnection extends Connection implements IDatabaseConnection
         $this->parent->message = oci_error();
         return FALSE;
       } else {
+        $data = array();
         @oci_execute($cursor);
         @oci_fetch_all($cursor, $data, 0, -1, OCI_ASSOC + OCI_FETCHSTATEMENT_BY_ROW);
         return $data;
@@ -168,7 +167,7 @@ class OracleConnection extends Connection implements IDatabaseConnection
   {
     if (is_array($this->arrBindParameters)) {
       foreach ($this->arrBindParameters as $field => $value) {
-        oci_bind_by_name($statement, $field, $value);
+        oci_bind_by_name($statement, $field, $this->arrBindParameters[$field]);
       }
     }
   }
