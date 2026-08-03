@@ -8,11 +8,20 @@ abstract class ControllerLoader
 {
 
   /**
-   * Load a controller based on GET parameters
+   * Load a controller based on GET parameters or CLI parameters.
+   *
+   * When calling from the CLI, use '-c="my.path.to.Controller"' to load,
+   * via web, call it via '?c=my.path.to.Controller'.
+   * "Controller" will be automatically appended to the name.
+   * Example:
+   * "c=login.Login" would load file "src/login/LoginController.class.php" and expects class name to be
+   * "LoginController".
+   *
    * @param String $controllerNS
    * @param String $paramControllerName
    * @param String|boolean $defaultController
    * @return AbstractController|boolean
+   * @throws IllegalArgumentException
    */
   public static function load($controllerNS, $paramControllerName, $defaultController = FALSE)
   {
@@ -29,7 +38,7 @@ abstract class ControllerLoader
     } else {
       $paramController = filter_input(INPUT_GET, $paramControllerName, FILTER_SANITIZE_STRING);
     }
-    $nameController = (($paramController) ? $paramController : $defaultController) . 'Controller';
+    $nameController = $paramController ?: $defaultController . 'Controller';
 
     // ... load ..
     uses($controllerNS . '.' . $nameController);
