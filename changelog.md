@@ -35,3 +35,4 @@ updates:
 - added secondsToHourString($seconds) to DateUtil
 - extended database classes and added interface IDatabaseConnection
 - added support to load the Persohub framework in framework loader
+  

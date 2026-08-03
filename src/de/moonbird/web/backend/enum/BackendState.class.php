@@ -9,5 +9,7 @@
 class BackendState
 {
   const FAILED=-1;
+  const OPEN=0;
   const SUCCESS=1;
+
 }

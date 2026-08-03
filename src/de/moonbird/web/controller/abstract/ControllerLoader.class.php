@@ -19,10 +19,13 @@ abstract class ControllerLoader
 
     // add the "controller" part to the default namespace
     $controllerNS .= '.controller';
-    // define the controller ...
 
+    // define the controller based on usage, ...
     if (php_sapi_name() == 'cli') {
-      $paramController = filter_var($paramControllerName, FILTER_SANITIZE_STRING);
+      $shortOptions = "c::";
+      $longOptions = ["controller::"];
+      $options = getopt($shortOptions, $longOptions);
+      $paramController = filter_var($options[$paramControllerName] ?? $paramControllerName, FILTER_SANITIZE_STRING);
     } else {
       $paramController = filter_input(INPUT_GET, $paramControllerName, FILTER_SANITIZE_STRING);
     }
