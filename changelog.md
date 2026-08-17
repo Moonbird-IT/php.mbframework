@@ -1,3 +1,13 @@
+### 1.9.1.0
+
+updates:
+- added new GenericException class
+- implemented new GenericException class in Connection and OracleConnection
+- added new Oracle bindParametersByReference method to use parameters as references
+- moved SecurityGate class from app project to framework
+- adjusted ControllerLoader to properly handle input parameters via console
+
+
 ### 1.9.0.0
 
 updates:

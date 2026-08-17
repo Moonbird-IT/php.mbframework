@@ -5,9 +5,7 @@
  */
 
 /**
- * Description of ExceptionCode
- *
- * @author XDE11069
+ * Enumeration for exception types.
  */
 class ExceptionCode {
     // db exceptions
@@ -28,4 +26,3 @@ class ExceptionCode {
     // not implemented exceptions
     const NI_EXCEPTION= 40001;
 }
-?>

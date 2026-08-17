@@ -57,12 +57,12 @@ class SecurityGate
       $this->user = $this->getUser();
     }
     $query= sprintf(
-        'SELECT COUNT(*) found from v_user_group
+      'SELECT COUNT(*) found from v_user_group
           WHERE lower(group_name) = \'%s\'
           AND lower(user_name) = \'%s\'',
-        strtolower($right),
-        $this->user
-      );
+      strtolower($right),
+      $this->user
+    );
     $arrValues = $this->connection->select($query);
     if (is_array($arrValues) && count($arrValues) > 0) {
       return $arrValues[0]['FOUND'] > 0;
@@ -116,7 +116,7 @@ class SecurityGate
         $user = $_COOKIE["username"];
       }
       if (isset($_COOKIE["username"]) && $_COOKIE["accesskey"] != $crypt->encrypt($user)
-        ) {
+      ) {
         //print $crypt->encrypt(base64_decode($_COOKIE["username"]))."<br />";
         //print $_COOKIE["accesskey"]."<br />";
         print printf("Modified security credentials for %s --", $_COOKIE["username"]);
@@ -160,7 +160,7 @@ class SecurityGate
     $crypt = new SimpleCrypt();
     $crypt->setSecret(Configuration::get('crypt', 'cookie_secret'));
     // if user has a cookie but the authentication fails, invalidate cookie
-   $accessKey= $crypt->encrypt($this->user);
+    $accessKey= $crypt->encrypt($this->user);
 
     if ($this->stayLoggedIn) {
       setcookie("username", base64_encode($this->user), time() + 360000, "/");
