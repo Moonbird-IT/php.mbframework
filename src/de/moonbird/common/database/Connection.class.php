@@ -1,11 +1,13 @@
 <?php
+
 uses(
 	'de.moonbird.common.database.enum.ConnectionState',
 	'de.moonbird.common.database.enum.DatabaseFetchStyle',
 	'de.moonbird.common.array.ArrayUtil',
 	'de.moonbird.common.database.extender.QueryExtender',
 	'de.moonbird.interfaces.common.database.IDatabaseFacade',
-  'de.moonbird.interfaces.common.database.IDatabaseConnection'
+  'de.moonbird.interfaces.common.database.IDatabaseConnection',
+  'de.moonbird.common.exception.GenericException'
 );
 
 class Connection implements IDatabaseFacade
@@ -26,6 +28,9 @@ class Connection implements IDatabaseFacade
 	protected $state = ConnectionState::INITIAL;
   protected $fetchStyle = NULL;
   protected $arrFilter = array();
+
+  /** @var GenericException null  */
+  protected $exception = null;
 
 	// logging actions
 	private $boolLoggingActive = FALSE;
@@ -125,6 +130,8 @@ class Connection implements IDatabaseFacade
 	 */
 	public function select($query, $filters = FALSE, $arrLikeFilters = FALSE, $orderStatement = "")
 	{
+
+    $this->resetException();
 
 		if (!$filters instanceof QueryExtender) {
 
@@ -232,6 +239,7 @@ class Connection implements IDatabaseFacade
 	 */
 	public function execute($query)
 	{
+    $this->resetException();
 		$this->addToQueryLog($query);
 		return $this->connection->execute($query);
 	}
@@ -305,7 +313,9 @@ class Connection implements IDatabaseFacade
 	}
 
 	/**
-	 * Bind parameters to a query. Call this prior to calling select() or execute().
+	 * Bind parameters to a query.
+   *
+   * Call it prior to calling select() or execute().
 	 * @param $arrParameters
 	 */
 	public function bindParameters($arrParameters)
@@ -313,11 +323,26 @@ class Connection implements IDatabaseFacade
 		$this->connection->bindParameters($arrParameters);
 	}
 
+  /**
+   * Bind parameters by reference.
+   *
+   * As not all DBMS support this method, rely on the regular "bindParameters" if method does not exist.
+   * Required for Oracle, as oci_bind_by_name expects variables to be updatable.
+   */
+  public function bindParametersByReference (&$arrParameters) {
+    if (method_exists($this->connection, 'bindParametersByReference')) {
+      $this->connection->bindParametersByReference($arrParameters);
+    } else {
+      $this->connection->bindParameters($arrParameters);
+    }
+  }
+
 	public function getInternalConnection() {
 		return $this->connection;
 	}
 
 	public function query($query, $typeMap = array()) {
+    $this->resetException();
     return $this->connection->query($query,$typeMap);
   }
 
@@ -335,6 +360,14 @@ class Connection implements IDatabaseFacade
 
   public function resetFetchStyle() {
     $this->connection->fetchStyle = NULL;
+  }
+
+  public function getException() {
+    return $this->exception;
+  }
+
+  private function resetException() {
+    $this->exception = null;
   }
 
   private function getSpecificFetchStyle($fetchStyle) {

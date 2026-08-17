@@ -8,6 +8,7 @@
 class OracleConnection extends Connection implements IDatabaseConnection
 {
 
+  /** @var Connection bool  */
   private $parent = FALSE;
   private $internalConnection = FALSE;
   private $arrBindParameters = FALSE;
@@ -90,7 +91,11 @@ class OracleConnection extends Connection implements IDatabaseConnection
       if (oci_execute($statement)) {
         $returnValue = $returnValue ? TRUE : FALSE;
       } else {
-        $this->parent->message = oci_error() . "\n>>> " . $query;
+        $error = oci_error($statement);
+        $this->parent->exception = new GenericException($error['code'], $error['message'], 'OracleConnection->execute');
+        print_r($this->parent->exception);
+        die();
+        $this->parent->lastQuery =  $query;
         debug_print_backtrace();
         $returnValue = FALSE;
       }
@@ -150,11 +155,21 @@ class OracleConnection extends Connection implements IDatabaseConnection
   }
 
   /**
-   * Bind a set of parameters to a query
+   * Bind a set of parameters of a query
    * @param $arrParameters
    */
   public function bindParameters($arrParameters)
   {
+    $this->arrBindParameters = $arrParameters;
+  }
+
+  /**
+   * Bind a set of parameters by reference of a query
+   * @param $arrParameters
+   */
+  public function bindParametersByReference(&$arrParameters)
+  {
+    print "Using reference binding\n";
     $this->arrBindParameters = $arrParameters;
   }
 
@@ -166,9 +181,11 @@ class OracleConnection extends Connection implements IDatabaseConnection
   private function executeBind(&$statement)
   {
     if (is_array($this->arrBindParameters)) {
-      foreach ($this->arrBindParameters as $field => $value) {
-        oci_bind_by_name($statement, $field, $this->arrBindParameters[$field]);
+      foreach ($this->arrBindParameters as $field => &$value) {
+        oci_bind_by_name($statement, $field, $value);
+        var_dump($value);
       }
+      unset($value);
     }
   }
 

@@ -20,7 +20,7 @@ abstract class ControllerLoader
    * @param String $controllerNS
    * @param String $paramControllerName
    * @param String|boolean $defaultController
-   * @return AbstractController|boolean
+   * @return AbstractViewController|boolean
    * @throws IllegalArgumentException
    */
   public static function load($controllerNS, $paramControllerName, $defaultController = FALSE)
@@ -34,11 +34,11 @@ abstract class ControllerLoader
       $shortOptions = "c::";
       $longOptions = ["controller::"];
       $options = getopt($shortOptions, $longOptions);
-      $paramController = filter_var($options[$paramControllerName] ?? $paramControllerName, FILTER_SANITIZE_STRING);
+      $paramController = htmlspecialchars($options[$paramControllerName] ?? '', ENT_QUOTES, 'UTF-8');
     } else {
       $paramController = filter_input(INPUT_GET, $paramControllerName, FILTER_SANITIZE_STRING);
     }
-    $nameController = $paramController ?: $defaultController . 'Controller';
+    $nameController = ($paramController ?: $defaultController) . 'Controller';
 
     // ... load ..
     uses($controllerNS . '.' . $nameController);
@@ -49,7 +49,7 @@ abstract class ControllerLoader
     if (class_exists($nameController)) {
 
       // ... and execute the controller (default: MainController)
-      /** @var AbstractController $controller */
+      /** @var AbstractViewController $controller */
       $controller = new $nameController;
       return $controller;
     } else {
