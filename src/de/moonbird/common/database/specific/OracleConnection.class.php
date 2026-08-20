@@ -183,7 +183,6 @@ class OracleConnection extends Connection implements IDatabaseConnection
     if (is_array($this->arrBindParameters)) {
       foreach ($this->arrBindParameters as $field => &$value) {
         oci_bind_by_name($statement, $field, $value);
-        var_dump($value);
       }
       unset($value);
     }
