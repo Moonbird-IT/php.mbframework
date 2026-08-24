@@ -1,33 +1,30 @@
 <?php
-/**
- * User: Sascha Meyer Moonbird IT
- * Date: 18.10.12
- * Time: 11:31
- * @version: $Id$
- * Purpose: Permission check functionality
- */
-
 uses(
   'de.moonbird.common.database.ConnectionBuilder',
   'de.moonbird.common.encryption.SimpleCrypt',
   'de.moonbird.common.ldap.LdapConnection'
 );
 
+/**
+ * Perform authentication against LDAP and database.
+ */
 class SecurityGate
 {
 
-  /** @var Connection $this->connection */
+  /** @var Connection $this ->connection */
   private $connection = FALSE;
   private $user = FALSE;
-  private $pass= FALSE;
-  private $stayLoggedIn= FALSE;
+  private $pass = FALSE;
+  private $stayLoggedIn = FALSE;
   private $legacyMode = FALSE;
 
-  public function __construct($connection) {
-    $this->connection= $connection;
+  public function __construct($connection)
+  {
+    $this->connection = $connection;
   }
 
-  public function enableLegacyMode($value) {
+  public function enableLegacyMode($value)
+  {
     $this->legacyMode = $value;
   }
 
@@ -40,8 +37,9 @@ class SecurityGate
   /**
    * activate 30 days session duration
    */
-  public function setLTCookie () {
-    $this->stayLoggedIn= TRUE;
+  public function setLTCookie()
+  {
+    $this->stayLoggedIn = TRUE;
   }
 
   public function setPassWord($pass)
@@ -56,7 +54,7 @@ class SecurityGate
       $this->validateCookie();
       $this->user = $this->getUser();
     }
-    $query= sprintf(
+    $query = sprintf(
       'SELECT COUNT(*) found from v_user_group
           WHERE lower(group_name) = \'%s\'
           AND lower(user_name) = \'%s\'',
@@ -111,19 +109,18 @@ class SecurityGate
       $crypt = new SimpleCrypt();
       $crypt->setSecret(Configuration::get('crypt', 'cookie_secret'));
       // if user has a cookie but the authentication fails, invalidate cookie
-      $user= base64_decode($_COOKIE["username"]);
-      if ($this->legacyMode) {
-        $user = $_COOKIE["username"];
-      }
-      if (isset($_COOKIE["username"]) && $_COOKIE["accesskey"] != $crypt->encrypt($user)
-      ) {
-        //print $crypt->encrypt(base64_decode($_COOKIE["username"]))."<br />";
-        //print $_COOKIE["accesskey"]."<br />";
-        print printf("Modified security credentials for %s --", $_COOKIE["username"]);
-        //die();
-        setcookie("username", "", -1, "/");
-        setcookie("accesskey", "", -1, "/");
-        die();
+      if (isset($_COOKIE["username"])) {
+        $user = base64_decode($_COOKIE["username"]);
+        if ($this->legacyMode) {
+          $user = $_COOKIE["username"];
+        }
+        if (isset($_COOKIE["username"]) && $_COOKIE["accesskey"] != $crypt->encrypt($user)
+        ) {
+          print printf("Modified security credentials for %s --", $_COOKIE["username"]);
+          setcookie("username", "", -1, "/");
+          setcookie("accesskey", "", -1, "/");
+          die();
+        }
       }
     }
   }
@@ -132,10 +129,11 @@ class SecurityGate
    * Authenticate user against AD
    * @return bool
    */
-  public function authenticate () {
-    $urlAuthorisation= sprintf(Configuration::get('ldap', 'auth', 'url'), $this->user, $this->pass);
-    $ldap= new LdapConnection($urlAuthorisation);
-    $returnCode= $ldap->getState() == ConnectionState::OPEN;
+  public function authenticate()
+  {
+    $urlAuthorisation = sprintf(Configuration::get('ldap', 'auth', 'url'), $this->user, $this->pass);
+    $ldap = new LdapConnection($urlAuthorisation);
+    $returnCode = $ldap->getState() == ConnectionState::OPEN;
     $ldap->disconnect();
     return $returnCode;
   }
@@ -156,11 +154,12 @@ class SecurityGate
   /**
    * Set cookie information
    */
-  public function permit() {
+  public function permit()
+  {
     $crypt = new SimpleCrypt();
     $crypt->setSecret(Configuration::get('crypt', 'cookie_secret'));
     // if user has a cookie but the authentication fails, invalidate cookie
-    $accessKey= $crypt->encrypt($this->user);
+    $accessKey = $crypt->encrypt($this->user);
 
     if ($this->stayLoggedIn) {
       setcookie("username", base64_encode($this->user), time() + 360000, "/");
@@ -172,7 +171,8 @@ class SecurityGate
     flush();
   }
 
-  public function logout() {
+  public function logout()
+  {
     setcookie("username", "", -1, "/");
     setcookie("accesskey", "", -1, "/");
     header('location: ?');
