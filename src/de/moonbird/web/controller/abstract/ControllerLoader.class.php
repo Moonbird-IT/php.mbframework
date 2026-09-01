@@ -19,11 +19,11 @@ abstract class ControllerLoader
    *
    * @param String $controllerNS
    * @param String $paramControllerName
-   * @param String|boolean $defaultController
+   * @param boolean|String $defaultController
    * @return AbstractViewController|boolean
    * @throws IllegalArgumentException
    */
-  public static function load($controllerNS, $paramControllerName, $defaultController = FALSE)
+  public static function load(string $controllerNS, string $paramControllerName, $defaultController = FALSE)
   {
 
     // add the "controller" part to the default namespace
@@ -31,10 +31,14 @@ abstract class ControllerLoader
 
     // define the controller based on usage, ...
     if (php_sapi_name() == 'cli') {
-      $shortOptions = "c::";
-      $longOptions = ["controller::"];
-      $options = getopt($shortOptions, $longOptions);
-      $paramController = htmlspecialchars($options[$paramControllerName] ?? '', ENT_QUOTES, 'UTF-8');
+      if ($paramControllerName != '') {
+        $paramController = $paramControllerName;
+      } else {
+        $shortOptions = "c::";
+        $longOptions = ["controller::"];
+        $options = getopt($shortOptions, $longOptions);
+        $paramController = htmlspecialchars($options[$paramControllerName] ?? '', ENT_QUOTES, 'UTF-8');
+      }
     } else {
       $paramController = filter_input(INPUT_GET, $paramControllerName, FILTER_SANITIZE_STRING);
     }
