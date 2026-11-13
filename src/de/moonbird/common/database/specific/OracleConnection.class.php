@@ -17,6 +17,8 @@ class OracleConnection extends Connection implements IDatabaseConnection
     DatabaseFetchStyle::FETCH_ASSOC => OCI_ASSOC,
     DatabaseFetchStyle::FETCH_ARRAY =>  OCI_NUM
   );
+  
+  private $queryAssociation = [];
 
   /** Connection $this->parent */
   public function __construct($parent)
@@ -52,22 +54,47 @@ class OracleConnection extends Connection implements IDatabaseConnection
     $result = array();
 
     foreach ($queries as $query) {
-      $statement = oci_parse($this->internalConnection, $query);
-      $this->executeBind($statement);
+      $stmt = oci_parse($this->internalConnection, $query);
+      if ($stmt === FALSE) {
+        $error = oci_error($this->internalConnection);
+        $this->parent->message = $this->formatOciError($error, $query);
+        $this->parent->lastQuery = $query;
+        return FALSE;
+      }
 
-      if (!oci_execute($statement)) {
-        $this->parent->message = oci_error() . "\n>>> " . $query;
+      $this->storeQuery($stmt,$query);
+      $this->executeBind($stmt);
+
+      if (!oci_execute($stmt)) {
+        $error = oci_error($stmt);
+        $this->parent->message = $this->formatOciError($error, $query);
+        $this->parent->lastQuery = $query;
         debug_print_backtrace();
         return FALSE;
+      }
+
+      if (!$this->canFetchFromStatement($stmt)) {
+        $this->parent->message = 'OracleConnection->select can only fetch rows from SELECT statements.' . "\n>>> " . $query;
+        $this->parent->lastQuery = $query;
+        return FALSE;
+      }
+
+      $statementResult = array();
+      $fetchStatus = oci_fetch_all($stmt, $statementResult, 0, -1, OCI_FETCHSTATEMENT_BY_ROW);
+      if ($fetchStatus === FALSE) {
+        $error = oci_error($stmt);
+        $this->parent->message = $this->formatOciError($error, $query);
+        $this->parent->lastQuery = $this->retrieveQuery($stmt);
+        return FALSE;
+      }
+
+      if (!empty($statementResult)) {
+        $result = array_merge($result, $statementResult);
       }
     }
 
     // unset previously bound parameters
     $this->arrBindParameters= FALSE;
-
-    if (!oci_fetch_all($statement, $result, 0, -1, OCI_FETCHSTATEMENT_BY_ROW)) {
-      return FALSE;
-    }
     return $result;
   }
 
@@ -85,17 +112,16 @@ class OracleConnection extends Connection implements IDatabaseConnection
 
     foreach ($queries as $query) {
 
-      $statement = oci_parse($this->internalConnection, $query);
-      $this->executeBind($statement);
+      $stmt = oci_parse($this->internalConnection, $query);
+      $this->storeQuery($stmt, $query);
+      $this->executeBind($stmt);
 
-      if (oci_execute($statement)) {
-        $returnValue = $returnValue ? TRUE : FALSE;
+      if (oci_execute($stmt)) {
+        $returnValue = (bool)$returnValue;
       } else {
-        $error = oci_error($statement);
+        $error = oci_error($stmt);
         $this->parent->exception = new GenericException($error['code'], $error['message'], 'OracleConnection->execute');
-        print_r($this->parent->exception);
-        die();
-        $this->parent->lastQuery =  $query;
+        $this->parent->lastQuery =  $this->retrieveQuery($stmt);
         debug_print_backtrace();
         $returnValue = FALSE;
       }
@@ -107,6 +133,12 @@ class OracleConnection extends Connection implements IDatabaseConnection
     return $returnValue;
   }
 
+  /**
+   * Fetch data from an Oracle cursor.
+   * @param string $query
+   * @return bool|array
+   * @throws SqlException
+   */
   public function fetchCursor($query)
   {
     try {
@@ -173,21 +205,6 @@ class OracleConnection extends Connection implements IDatabaseConnection
     $this->arrBindParameters = $arrParameters;
   }
 
-
-  /**
-   * Execute bound statement and bind named placeholders
-   * @param $statement
-   */
-  private function executeBind(&$statement)
-  {
-    if (is_array($this->arrBindParameters)) {
-      foreach ($this->arrBindParameters as $field => &$value) {
-        oci_bind_by_name($statement, $field, $value);
-      }
-      unset($value);
-    }
-  }
-
   /**
    * Return the internal Oracle connection instance
    * @return bool|resource
@@ -213,5 +230,69 @@ class OracleConnection extends Connection implements IDatabaseConnection
       error_log('Failed reading data from statement, message was: '.$ex->getMessage());
       return FALSE;
     }
+  }
+
+  /*---------------------- Privates -----------------------------------*/
+  /**
+   * Execute bound statement and bind named placeholders
+   * @param $stmt
+   */
+  private function executeBind(&$stmt)
+  {
+    if (is_array($this->arrBindParameters)) {
+      foreach ($this->arrBindParameters as $field => &$value) {
+        oci_bind_by_name($stmt, $field, $value);
+      }
+      unset($value);
+    }
+  }
+
+  /**
+   * Store a prepared statement along with its query.
+   * @param $stmt
+   * @param string $query
+   * @return void
+   */
+  private function storeQuery($stmt, $query) {
+    $this->queryAssociation[(int)$stmt] = $query;
+  }
+
+  /**
+   * Get the associated query for a given statement.
+   * @param $stmt
+   * @return string
+   */
+  private function retrieveQuery($stmt) {
+    return $this->queryAssociation[(int)$stmt];
+  }
+
+  /**
+   * Determine whether the statement can be fetched from safely.
+   *
+   * ORA-24374 can happen when a fetch is attempted on a statement that does
+   * not define a result set, e.g. DML/DDL/PLSQL or an invalid parse/execute path.
+   *
+   * @param resource $stmt
+   * @return bool
+   */
+  private function canFetchFromStatement($stmt)
+  {
+    return oci_statement_type($stmt) === 'SELECT';
+  }
+
+  /**
+   * Build a readable OCI error message with query context.
+   *
+   * @param array|bool $error
+   * @param string $query
+   * @return string
+   */
+  private function formatOciError($error, $query)
+  {
+    if (is_array($error)) {
+      return $error['message'] . "\n>>> " . $query;
+    }
+
+    return (string)$error . "\n>>> " . $query;
   }
 }

@@ -1,3 +1,17 @@
+### 1.9.1.3
+
+fixes:
+- Oracle handler class now allows access to internal Oracle error message
+
+### 1.9.1.2
+
+updates:
+- improved implementation of registry
+
+### 1.9.1.1
+
+no external release
+
 ### 1.9.1.0
 
 updates:
@@ -6,7 +20,6 @@ updates:
 - added new Oracle bindParametersByReference method to use parameters as references
 - moved SecurityGate class from app project to framework
 - adjusted ControllerLoader to properly handle input parameters via console
-
 
 ### 1.9.0.0
 
